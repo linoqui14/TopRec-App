@@ -12,6 +12,9 @@ class MyColors{
   static const Color deadBlue = Color(0xff558ED9);
   static const Color skyBlueDead = Color(0xffA7C8F2);
   static const Color black = Color(0xff151515);
+  static const Color primary = Color(0xff1A1851);
+  static const Color secondary = Color(0xffF9A521);
+  static const Color darkPrimary = Color(0xff080036);
 
 }
 
@@ -30,7 +33,7 @@ class DBController{
   static Future<User?> getUser({required String username,required String password}) async{
     String phpurl = "http://$ip:5000/get_user";
     var res = await http.post(Uri.http('$ip:5000','/get_user'),body: {'username':username,'password':password});
-
+    // print(res.body);
     try {
       User user = User.toObject(json.decode(res.body));
       return user;
@@ -53,9 +56,10 @@ class DBController{
     // }
   }
   static Future<String?> getSearch({required String words}) async{
-
     var res = await http.post(Uri.http('$ip:5000','/get_search'),body: {'words':words,});
+    // print(res.body);
     return res.body;
+
     //
     // try {
     //   User user = User.toObject(json.decode(res.body));
@@ -69,8 +73,14 @@ class DBController{
 
   static Future<bool> createUser({required User user}) async{
     String phpurl = "http://$ip:5000/create_user";
-    var res = await http.post(Uri.parse(phpurl),body: user.toMap());
+    var res = await http.post(Uri.parse(phpurl),body: user.toMap(isNew: true));
     // print(res.body);
+    return res.body.split("{").length>1?true:false;
+  }
+
+  static Future<bool> updateUser({required User user}) async{
+    var res = await http.post(Uri.http('$ip:5000','/update_user'),body: user.toMap(isNew: false));
+    // print(user.recentSearch);
     return res.body.split("{").length>1?true:false;
   }
 

@@ -2,9 +2,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:lottie/lottie.dart';
 import 'package:toprec/custom_widgets/custom_toggle_buttons.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:toprec/pages/login.dart';
+import 'package:toprec/pages/result.dart';
 import 'package:toprec/tools/variables.dart';
 import '../custom_widgets/custom_text_button.dart';
 import '../custom_widgets/custom_text_field.dart';
@@ -24,7 +27,17 @@ class _HomeState extends State<Home>{
 
   @override
   void initState() {
-    // TODO: implement initState
+    DBController.getUser(username: widget.user.username, password: widget.user.password).then((value){
+     // print(value!.recentSearch);
+      if(value!.recentSearch.isNotEmpty&&value!=null){
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => Result(user: value,word: value.recentSearch,)),
+              (Route<dynamic> route) => false,
+        );
+      }
+    });
+
     super.initState();
   }
   @override
@@ -32,7 +45,7 @@ class _HomeState extends State<Home>{
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
-        backgroundColor:Color(0xff213A48),
+        backgroundColor:MyColors.primary,
         elevation: 0,
         title:  Text("TOPREC",style: TextStyle(fontFamily: 'Tually',color: Colors.white,fontSize: MediaQuery.of(context).size.width*.02),),
         actions: [
@@ -65,10 +78,25 @@ class _HomeState extends State<Home>{
                                 // side: BorderSide(color: Colors.red)
                               )
                           ),
-                          backgroundColor: MaterialStateProperty.all(Color(0xff031620))
+                          backgroundColor: MaterialStateProperty.all(MyColors.secondary)
                       ),
                       onPressed: (){
+                        BoxCollection.open(
+                          'db.db', // Name of your database
+                          {'users',}, // Names of your boxes
+                          path: './', // Path where to store your boxes (Only used in Flutter / Dart IO)
+                        ).then((res) {
+                          final users = res.openBox<Map>('users');
+                          users.then((user) {
+                            user.clear();
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(builder: (context) => Login()),
+                                  (Route<dynamic> route) => false,
+                            );
+                          });
 
+                        });
                       },
                       child: Text("Logout",style: TextStyle(color: Colors.white),),
                     ),
@@ -81,7 +109,7 @@ class _HomeState extends State<Home>{
       ),
       body: SafeArea(
         child: Container(
-          color: Color(0xff213A48),
+          color:MyColors.primary,
           child: Center(
             child: Stack(
               alignment: Alignment.center,
@@ -99,11 +127,11 @@ class _HomeState extends State<Home>{
 
                           repeatForever: true,
                           animatedTexts: [
-                            TypewriterAnimatedText("Machine Learning",textAlign: TextAlign.center,textStyle:TextStyle(color: Colors.white,fontWeight: FontWeight.w700,fontSize: 70,fontFamily: "Uni Sans") ,speed: Duration(milliseconds: 150),curve: Curves.easeInOutCubic),
-                            TypewriterAnimatedText("Artificial Intelligent",textAlign: TextAlign.center,textStyle:TextStyle(color: Colors.white,fontWeight: FontWeight.w700,fontSize: 70,fontFamily: "Uni Sans"),speed: Duration(milliseconds: 150),curve: Curves.easeInOutCubic),
-                            TypewriterAnimatedText("Robot",textAlign: TextAlign.center,textStyle:TextStyle(color: Colors.white,fontWeight: FontWeight.w700,fontSize: 70,fontFamily: "Uni Sans"),speed: Duration(milliseconds: 150),curve: Curves.easeInOutCubic),
+                            TypewriterAnimatedText("Machine Learning",textAlign: TextAlign.center,textStyle:TextStyle(color: MyColors.secondary,fontWeight: FontWeight.w700,fontSize: 70,fontFamily: "Uni Sans") ,speed: Duration(milliseconds: 150),curve: Curves.easeInOutCubic),
+                            TypewriterAnimatedText("Artificial Intelligent",textAlign: TextAlign.center,textStyle:TextStyle(color: MyColors.secondary,fontWeight: FontWeight.w700,fontSize: 70,fontFamily: "Uni Sans"),speed: Duration(milliseconds: 150),curve: Curves.easeInOutCubic),
+                            TypewriterAnimatedText("Robot",textAlign: TextAlign.center,textStyle:TextStyle(color:MyColors.secondary,fontWeight: FontWeight.w700,fontSize: 70,fontFamily: "Uni Sans"),speed: Duration(milliseconds: 150),curve: Curves.easeInOutCubic),
                             if(searchController.text.isNotEmpty)
-                              TypewriterAnimatedText(searchController.text,textAlign: TextAlign.center,textStyle:TextStyle(color: Colors.white,fontWeight: FontWeight.w700,fontSize: 70,fontFamily: "Uni Sans"),speed: Duration(milliseconds: 150),curve: Curves.easeInOutCubic),
+                              TypewriterAnimatedText(searchController.text,textAlign: TextAlign.center,textStyle:TextStyle(color:MyColors.secondary,fontWeight: FontWeight.w700,fontSize: 70,fontFamily: "Uni Sans"),speed: Duration(milliseconds: 150),curve: Curves.easeInOutCubic),
                           ],
                         ),
                       )
@@ -136,7 +164,7 @@ class _HomeState extends State<Home>{
                                     });
                                   },
                                   radiusAll: 20,
-                                  fillColor: Color(0xff22495F),
+                                  fillColor:MyColors.darkPrimary,
                                   filled: true,
                                   icon: Icons.search,
                                   color: Colors.white,
@@ -148,15 +176,28 @@ class _HomeState extends State<Home>{
                                 radiusAll: 50,
                                 width: 50,
                                 height: 46,
-                                onPressed:(selectedCategories.length>0||searchController.text.isNotEmpty)? (){
-                                  DBController.getRecommended(words: searchController.text).then((value) {
-                                    print(value);
+                                onPressed:(selectedCategories.isNotEmpty||searchController.text.isNotEmpty)? (){
+                                  String word = searchController.text;
+                                  for (var cat in selectedCategories) {
+                                    word+=cat;
+                                  }
+                                  widget.user.recentSearch = word;
+                                  DBController.updateUser(user:widget.user ).then((value) {
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => Result(user: widget.user,word: word,)),
+                                          (Route<dynamic> route) => false,
+                                    );
+                                    // print(value);
                                   });
-                                  DBController.getSearch(words: searchController.text).then((value) {
-                                    print(value);
-                                  });
+                                  // DBController.getRecommended(words: searchController.text).then((value) {
+                                  //   print(value);
+                                  // });
+                                  // DBController.getSearch(words: searchController.text).then((value) {
+                                  //   print(value);
+                                  // });
                                 }:null,
-                                color: selectedCategories.length>0||searchController.text.isNotEmpty?Colors.indigo:Color(0xff031620).withAlpha(120),
+                                color: selectedCategories.length>0||searchController.text.isNotEmpty?MyColors.secondary:MyColors.darkPrimary.withAlpha(120),
 
                                 text: "Go",
                               ),
@@ -164,13 +205,13 @@ class _HomeState extends State<Home>{
                           ),
                           Container(
                             margin: EdgeInsets.all(5),
-                            width: MediaQuery.of(context).size.width*.2,
+                            width: MediaQuery.of(context).size.width*.15,
                             height: MediaQuery.of(context).size.height*.5,
                             decoration: BoxDecoration(
-                                color: Color(0xff3F5560).withAlpha(200),
+                                color: MyColors.darkPrimary.withAlpha(200),
                                 border: Border.all(
                                   width: 3,
-                                  color: Color(0xff839198),
+                                  color: MyColors.secondary,
                                 ),
                                 borderRadius: BorderRadius.all(Radius.circular(20))
                             ),
@@ -181,14 +222,14 @@ class _HomeState extends State<Home>{
                                   height: 50,
                                   width: double.infinity,
                                   decoration: BoxDecoration(
-                                      color: Color(0xff22495F),
+                                      color: MyColors.darkPrimary,
                                       border: Border.all(
                                         width: 0,
-                                        color: Color(0xff839198),
+                                        color: MyColors.secondary,
                                       ),
                                       borderRadius: BorderRadius.all(Radius.circular(18))
                                   ),
-                                  child: Text("Technologies Categories",style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
+                                  child: Text("Technology Categories",style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
                                 ),
                                 Padding(padding: EdgeInsets.all(10)),
                                 Padding(
@@ -205,7 +246,7 @@ class _HomeState extends State<Home>{
                                 )
                               ],
                             ),
-                          )
+                          ),
 
                         ],
                       ),

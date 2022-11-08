@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../tools/variables.dart';
+
 class CustomToggleButtons extends StatefulWidget{
   CustomToggleButtons({Key? key,required this.names,this.height = 100,this.onChange}) : super(key: key);
   final List<String> names;
@@ -34,7 +36,7 @@ class _ToggleButtonsState extends State<CustomToggleButtons>{
                         // side: BorderSide(color: Colors.red)
                       )
                   ),
-                  backgroundColor: MaterialStateProperty.all(selectedNames.where((sname) => sname == name).length!=0?Colors.indigo:Color(0xff031620).withAlpha(120))
+                  backgroundColor: MaterialStateProperty.all(selectedNames.where((sname) => sname == name).length!=0?MyColors.secondary:MyColors.primary)
               ),
               onPressed: (){
                 setState(() {

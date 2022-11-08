@@ -34,6 +34,7 @@ class _LoginState extends State<Login> {
         user.get('currently-login').then((result) {
           if(result!=null){
             User user = User.toObject(result!);
+
             username.text = user.username;
             password.text = user.password;
             Navigator.pushAndRemoveUntil(
@@ -47,9 +48,6 @@ class _LoginState extends State<Login> {
               isLogin = false;
             });
           }
-
-
-
         });
 
       });
@@ -62,10 +60,10 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     // print(Directory.current.path);
-    return isLogin? Container(color: Color(0xff213A48),child: Center(child: CircularProgressIndicator(),)):
+    return isLogin? Container(color:MyColors.primary,child: Center(child: CircularProgressIndicator(),)):
      Scaffold(
        appBar: AppBar(
-         backgroundColor:Color(0xff213A48),
+         backgroundColor:MyColors.primary,
          elevation: 0,
          title:  Text("TOPREC",style: TextStyle(fontFamily: 'Tually',color: Colors.white,fontSize: MediaQuery.of(context).size.width*.02),),
          actions: [
@@ -113,7 +111,7 @@ class _LoginState extends State<Login> {
 
        ),
       body: Container(
-        color: Color(0xff213A48),
+        color: MyColors.primary,
         child: Center(
           child: Stack(
             alignment: Alignment.center,
@@ -129,12 +127,29 @@ class _LoginState extends State<Login> {
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-
-                  Padding(padding: EdgeInsets.symmetric(vertical: 70)),
+                  // Padding(padding: EdgeInsets.symmetric(vertical: 70)),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(textAlign:TextAlign.center,"Be your partner\nin building the topic of your",style: TextStyle(color: Colors.white,fontWeight: FontWeight.normal,fontSize: 70),),
+                      Container(
+                        margin: EdgeInsets.only(left: 0),
+                        child: AnimatedTextKit(
+                          repeatForever: true,
+                          animatedTexts: [
+                            TypewriterAnimatedText(textAlign:TextAlign.center,"Thesis studies",textStyle:TextStyle(color: MyColors.secondary,fontWeight: FontWeight.w700,fontSize: 75,fontFamily: "Uni Sans") ,speed: Duration(milliseconds: 150),curve: Curves.easeInOutCubic),
+                            TypewriterAnimatedText(textAlign:TextAlign.center,"Group project",textStyle:TextStyle(color: MyColors.secondary,fontWeight: FontWeight.w700,fontSize: 75,fontFamily: "Uni Sans"),speed: Duration(milliseconds: 150),curve: Curves.easeInOutCubic),
+                            TypewriterAnimatedText(textAlign:TextAlign.center,"Personal project",textStyle:TextStyle(color: MyColors.secondary,fontWeight: FontWeight.w700,fontSize: 75,fontFamily: "Uni Sans"),speed: Duration(milliseconds: 150),curve: Curves.easeInOutCubic),
+                            TypewriterAnimatedText(textAlign:TextAlign.center,"Innovative ideas",textStyle:TextStyle(color: MyColors.secondary,fontWeight: FontWeight.w700,fontSize: 75,fontFamily: "Uni Sans"),speed: Duration(milliseconds: 150),curve: Curves.easeInOutCubic),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                   Container(
 
                     margin: EdgeInsets.only(right: 50),
-                    alignment: Alignment.centerRight,
+                    // alignment: Alignment.centerRight,
                     child: AnimatedOpacity(
                         opacity: isLogin?0:1,
                         duration: Duration(milliseconds: 500),
@@ -144,10 +159,10 @@ class _LoginState extends State<Login> {
                           Container(
                             padding: EdgeInsets.all(15),
                             decoration: BoxDecoration(
-                                color: Color(0xff3F5560).withAlpha(200),
+                                color: MyColors.darkPrimary,
                                 border: Border.all(
                                   width: 3,
-                                  color: Color(0xff839198),
+                                  color: MyColors.secondary,
                                 ),
                                 borderRadius: BorderRadius.all(Radius.circular(20))
                             ),
@@ -163,12 +178,16 @@ class _LoginState extends State<Login> {
                                       color: Colors.white,
                                       hint: "Username",
                                       controller: username,
+                                      filled: true,
+                                      fillColor: MyColors.primary,
                                       radiusAll: 20,
                                     ),
                                     CustomTextField(
                                       obscureText: true,
                                       color: Colors.white,
                                       hint: "Password",
+                                      filled: true,
+                                      fillColor: MyColors.primary,
                                       controller: password,
                                       radiusAll: 20,
                                     )
@@ -196,7 +215,7 @@ class _LoginState extends State<Login> {
                                                         // side: BorderSide(color: Colors.red)
                                                       )
                                                   ),
-                                                  backgroundColor: MaterialStateProperty.all(!isHover?Colors.indigo:Color(0xff031620))
+                                                  backgroundColor: MaterialStateProperty.all(!isHover?MyColors.secondary:MyColors.secondary)
                                               ),
                                               onPressed: (){
                                                 // // var user =  User(username: '201510${Random().nextInt(9000).toString()}',password: '123123',type: UserType.STUDENT);
@@ -209,6 +228,7 @@ class _LoginState extends State<Login> {
                                                 //  });
                                                 if(password.text.isNotEmpty&&username.text.isNotEmpty){
                                                   DBController.getUser(username: username.text, password: password.text).then((value){
+
                                                     if(value!=null){
                                                       BoxCollection.open(
                                                         'db.db', // Name of your database
@@ -217,7 +237,7 @@ class _LoginState extends State<Login> {
                                                       ).then((res) {
                                                         final users = res.openBox<Map>('users');
                                                         users.then((user) {
-                                                          user.put('currently-login',value.toMap());
+                                                          user.put('currently-login',value.toMap(isNew: false));
                                                           user.get('currently-login').then((result) {
                                                             if(result!=null){
                                                               User userR = User.toObject(result!);
@@ -250,7 +270,8 @@ class _LoginState extends State<Login> {
                       ),
 
                     ),
-                  )
+                  ),
+
 
                   // SvgPicture.asset(
                   //
@@ -261,28 +282,7 @@ class _LoginState extends State<Login> {
                   // )
                 ],
               ),
-              Container(
-                padding: EdgeInsets.all(30),
-                alignment: Alignment.centerLeft,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Be your partner\nin building the topic of your",style: TextStyle(color: Colors.white,fontWeight: FontWeight.normal,fontSize: 70),),
-                    Container(
-                      margin: EdgeInsets.only(left: 0),
-                      child: AnimatedTextKit(
-                        repeatForever: true,
-                        animatedTexts: [
-                          TypewriterAnimatedText("Thesis studies",textStyle:TextStyle(color: Colors.white,fontWeight: FontWeight.w700,fontSize: 75,fontFamily: "Uni Sans") ,speed: Duration(milliseconds: 150),curve: Curves.easeInOutCubic),
-                          TypewriterAnimatedText("Group project",textStyle:TextStyle(color: Colors.white,fontWeight: FontWeight.w700,fontSize: 75,fontFamily: "Uni Sans"),speed: Duration(milliseconds: 150),curve: Curves.easeInOutCubic),
-                          TypewriterAnimatedText("Personal project",textStyle:TextStyle(color: Colors.white,fontWeight: FontWeight.w700,fontSize: 75,fontFamily: "Uni Sans"),speed: Duration(milliseconds: 150),curve: Curves.easeInOutCubic),
-                          TypewriterAnimatedText("Innovative ideas",textStyle:TextStyle(color: Colors.white,fontWeight: FontWeight.w700,fontSize: 75,fontFamily: "Uni Sans"),speed: Duration(milliseconds: 150),curve: Curves.easeInOutCubic),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
+
             ],
           ),
         ),

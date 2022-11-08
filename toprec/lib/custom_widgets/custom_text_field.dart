@@ -27,13 +27,15 @@ class CustomTextField extends StatefulWidget{
     this.onChange,
     this.alignment,
     this.radiusAll,
-    this.fillColor
+    this.fillColor,
+    this.onEnter
   }) : super(key: key);
 
   final String hint;
   EdgeInsets padding;
   TextInputType? keyBoardType;
   final Function(String)? onChange;
+  final Function(String)? onEnter;
   IconData? icon;
   Widget? suffix;
   bool obscureText = false;
@@ -73,6 +75,7 @@ class _CustomTextFieldState extends State<CustomTextField>{
         controller: widget.controller,
         obscureText: widget.obscureText,
         onChanged: widget.onChange,
+        onSubmitted: widget.onEnter,
         style: TextStyle(
 
           color: widget.color,
