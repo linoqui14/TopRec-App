@@ -3,7 +3,10 @@ class UserType{
   static String STUDENT = 'STUDENT';
   static String FACULTY = 'FACULTY';
   static String ADMIN = 'ADMIN';
+  static List<String> USERSTYPES = ['STUDENT','FACULTY','ADMIN'];
 }
+
+
 
 
 class User{

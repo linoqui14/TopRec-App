@@ -1,6 +1,6 @@
 
 class SearchResult{
-  String ID,MONTH,YEAR,AUTHOR,ADVISER,TITLE,ABTRACT,RECOMMENDATION,KEYWORDS,MEMBERS,TAGS,CATEGORY;
+  String ID,MONTH,YEAR,AUTHOR,ADVISER,TITLE,ABTRACT,RECOMMENDATION,KEYWORDS,MEMBERS,TAGS,CATEGORY,FACULTY,DATEINPUTED;
 
   SearchResult(
       {
@@ -15,7 +15,9 @@ class SearchResult{
         required this.KEYWORDS,
         required this.MEMBERS,
         required this.TAGS,
-        this.CATEGORY = ""
+        this.CATEGORY = "",
+        this.FACULTY = "",
+        this.DATEINPUTED = ""
       });
 
   Map<String,dynamic> toMap(isNew){
@@ -32,6 +34,8 @@ class SearchResult{
         'members':MEMBERS,
         'category':CATEGORY,
         'tags':TAGS,
+        'faculty':FACULTY,
+
 
 
       };
@@ -48,7 +52,8 @@ class SearchResult{
       'members':MEMBERS,
       'category':CATEGORY,
       'tags':TAGS,
-      'id':ID
+      'id':ID,
+      'faculty':FACULTY,
 
     };
 
@@ -67,6 +72,8 @@ class SearchResult{
       MEMBERS:object['members'],
       TAGS:object['tags'],
       CATEGORY:object['category'],
+      DATEINPUTED:object['dateInputed'],
+      FACULTY: object['faculty'],
     );
   }
 

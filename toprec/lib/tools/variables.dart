@@ -33,7 +33,7 @@ class DBController{
   static Future<User?> getUser({required String username,required String password}) async{
     String phpurl = "http://$ip:5000/get_user";
     var res = await http.post(Uri.http('$ip:5000','/get_user'),body: {'username':username,'password':password});
-    print(res.body);
+    // print(res.body);
     try {
       User user = User.toObject(json.decode(res.body));
       return user;

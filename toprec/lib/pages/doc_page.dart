@@ -150,12 +150,13 @@ class _DocumentPageSate extends State<DocumentPage>{
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
+                                      width: MediaQuery.of(context).size.width*.8,
                                       margin: EdgeInsets.only(top: 10),
                                       padding: EdgeInsets.all(10),
                                       decoration: BoxDecoration(
-                                          color: MyColors.secondary,
+                                          color: Colors.purple,
 
-                                          borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight:Radius.circular(20),bottomRight: Radius.circular(20),)
+                                          borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight:Radius.circular(20),)
                                       ),
                                       child: SelectableText("Abstract",style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
                                     ),
@@ -177,12 +178,13 @@ class _DocumentPageSate extends State<DocumentPage>{
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
+                                      width: MediaQuery.of(context).size.width*.8,
                                       margin: EdgeInsets.only(top: 10),
                                       padding: EdgeInsets.all(10),
                                       decoration: BoxDecoration(
-                                          color: MyColors.secondary,
+                                          color: Colors.deepPurpleAccent,
 
-                                          borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight:Radius.circular(20),bottomRight: Radius.circular(20),)
+                                          borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight:Radius.circular(20),)
                                       ),
                                       child: SelectableText("Recommendation",style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
                                     ),
@@ -204,12 +206,13 @@ class _DocumentPageSate extends State<DocumentPage>{
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
+                                      width: MediaQuery.of(context).size.width*.8,
                                       margin: EdgeInsets.only(top: 10),
                                       padding: EdgeInsets.all(10),
                                       decoration: BoxDecoration(
-                                          color: MyColors.secondary,
+                                          color: Colors.purpleAccent,
 
-                                          borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight:Radius.circular(20),bottomRight: Radius.circular(20),)
+                                          borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight:Radius.circular(20),)
                                       ),
                                       child: SelectableText("Key Words",style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
                                     ),
@@ -231,12 +234,13 @@ class _DocumentPageSate extends State<DocumentPage>{
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
+                                      width: MediaQuery.of(context).size.width*.8,
                                       margin: EdgeInsets.only(top: 10),
                                       padding: EdgeInsets.all(10),
                                       decoration: BoxDecoration(
-                                          color: MyColors.secondary,
+                                          color: Colors.deepPurple,
 
-                                          borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight:Radius.circular(20),bottomRight: Radius.circular(20),)
+                                          borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight:Radius.circular(20),)
                                       ),
                                       child: SelectableText("Adviser",style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
                                     ),
@@ -258,14 +262,15 @@ class _DocumentPageSate extends State<DocumentPage>{
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
+                                      width: MediaQuery.of(context).size.width*.8,
                                       margin: EdgeInsets.only(top: 10),
                                       padding: EdgeInsets.all(10),
                                       decoration: BoxDecoration(
-                                          color: MyColors.secondary,
+                                          color: Colors.indigo,
 
-                                          borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight:Radius.circular(20),bottomRight: Radius.circular(20),)
+                                          borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight:Radius.circular(20),)
                                       ),
-                                      child: SelectableText("Member",style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
+                                      child: SelectableText("Categories",style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
                                     ),
                                     Container(
                                       width: MediaQuery.of(context).size.width*.8,
@@ -277,7 +282,7 @@ class _DocumentPageSate extends State<DocumentPage>{
 
                                           borderRadius: BorderRadius.only(topLeft: Radius.circular(0),topRight:Radius.circular(20),bottomRight: Radius.circular(20),bottomLeft: Radius.circular(20))
                                       ),
-                                      child: SelectableText(widget.searchResult.MEMBERS.replaceAll("\n", ""),style: TextStyle(color: Colors.white,fontSize: 15,),),
+                                      child: SelectableText(widget.searchResult.CATEGORY.replaceAll("\n", ""),style: TextStyle(color: Colors.white,fontSize: 15,),),
                                     ),
                                   ],
                                 ),

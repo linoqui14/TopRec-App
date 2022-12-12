@@ -5,6 +5,8 @@ import 'package:hive/hive.dart';
 import 'package:lottie/lottie.dart';
 import 'package:toprec/models/recommended_topic_result.dart';
 import 'package:toprec/models/user.dart';
+import 'package:toprec/pages/account.dart';
+import 'package:toprec/pages/appbar.dart';
 import 'package:toprec/pages/doc_page.dart';
 import 'package:toprec/tools/variables.dart';
 import 'package:flutter/services.dart';
@@ -17,9 +19,10 @@ import 'login.dart';
 
 
 class Result extends StatefulWidget {
-  const Result({Key? key,required this.user,required this.word}) : super(key: key);
+  const Result({Key? key,required this.user,required this.word,required this.listOfCat}) : super(key: key);
   final User user;
   final String word;
+  final List<String> listOfCat;
   @override
   State<Result> createState() => _ResultState();
 }
@@ -38,94 +41,21 @@ class _ResultState extends State<Result> {
       });
     });
 
-
+    selectedCategories = widget.listOfCat;
     super.initState();
   }
-
+  String catToString(String del){
+    String catstring = "";
+    for(String cat in selectedCategories){
+      catstring+=cat+del;
+    }
+    return catstring;
+  }
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor:MyColors.primary,
-        elevation: 0,
-        title:  Row(
-          children: [
-            SelectableText("TOPREC   ",style: TextStyle(fontFamily: 'Tually',color: Colors.white,fontSize: MediaQuery.of(context).size.width*.02),),
-            SelectableText(widget.user.type.toLowerCase())
-          ],
-        ),
-        actions: [
-          if(true)
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 50,vertical: 10),
-              child: Row(
-                children: [
-                  TextButton(
-                    onPressed: (){
-
-                    },
-                    child: SelectableText("Contact",style: TextStyle(color: Colors.white),),
-                  ),
-                  Padding(padding: EdgeInsets.symmetric(horizontal: 20)),
-                  TextButton(
-                    onPressed: (){
-
-                    },
-                    child: SelectableText("About",style: TextStyle(color: Colors.white),),
-                  ),
-                  Padding(padding: EdgeInsets.symmetric(horizontal: 20)),
-                  if(widget.user.type.toUpperCase().compareTo(UserType.FACULTY.toUpperCase())==0)
-                    TextButton(
-                      onPressed: (){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => FacultyHome(user: widget.user)),
-
-                        );
-                      },
-                      child: Text("Manage Theses",style: TextStyle(color: Colors.white),),
-                    ),
-                  if(widget.user.type.toUpperCase().compareTo(UserType.FACULTY.toUpperCase())==0)
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 20)),
-                  if(true)//if login page
-                    TextButton(
-                      style: ButtonStyle(
-                          fixedSize: MaterialStateProperty.all(Size(80, 30)),
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(20)),
-                                // side: BorderSide(color: Colors.red)
-                              )
-                          ),
-                          backgroundColor: MaterialStateProperty.all(MyColors.secondary)
-                      ),
-                      onPressed: (){
-                        BoxCollection.open(
-                          'db.db', // Name of your database
-                          {'users',}, // Names of your boxes
-                          path: './', // Path where to store your boxes (Only used in Flutter / Dart IO)
-                        ).then((res) {
-                          final users = res.openBox<Map>('users');
-                          users.then((user) {
-                            user.clear();
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(builder: (context) => Login()),
-                                  (Route<dynamic> route) => false,
-                            );
-                          });
-
-                        });
-                      },
-                      child: Text("Logout",style: TextStyle(color: Colors.white),),
-                    ),
-
-                ],
-              ),
-            ),
-        ],
-      ),
+      appBar: header(widget.user,context,"result"),
       body: SafeArea(
         child: Container(
           color: MyColors.primary,
@@ -155,14 +85,9 @@ class _ResultState extends State<Result> {
                                 SizedBox(
                                   width:MediaQuery.of(context).size.width*.4,
                                   child: CustomTextField(
-
                                     onEnter: (value){
                                       setState(() {
-                                        word = "";
                                         word = searchController.text;
-                                        for (var cat in selectedCategories) {
-                                          word+=cat;
-                                        }
                                         widget.user.recentSearch = word;
                                         DBController.updateUser(user:widget.user ).then((value) {
                                           setState(() {
@@ -185,13 +110,13 @@ class _ResultState extends State<Result> {
                                   radiusAll: 50,
                                   width: 50,
                                   height: 46,
-                                  onPressed:(selectedCategories.length>0||searchController.text.isNotEmpty)? (){
+                                  onPressed:(selectedCategories.isNotEmpty||searchController.text.isNotEmpty)? (){
+                                    // if(selectedCategories.isNotEmpty&&searchController.text.isNotEmpty){
+                                    //   searchController.text = "";
+                                    //   return;
+                                    // }
                                     setState(() {
-                                      word = "";
                                       word = searchController.text;
-                                      for (var cat in selectedCategories) {
-                                        word+=cat;
-                                      }
                                       widget.user.recentSearch = word;
                                       DBController.updateUser(user:widget.user ).then((value) {
                                         setState(() {
@@ -200,12 +125,7 @@ class _ResultState extends State<Result> {
 
                                       });
                                     });
-                                    // DBController.getRecommended(words: searchController.text).then((value) {
-                                    //   print(value);
-                                    // });
-                                    // DBController.getSearch(words: searchController.text).then((value) {
-                                    //   print(value);
-                                    // });
+
                                   }:null,
                                   color: selectedCategories.length>0||searchController.text.isNotEmpty?MyColors.secondary:Color(0xff031620).withAlpha(120),
 
@@ -260,15 +180,45 @@ class _ResultState extends State<Result> {
                                             for(String json in jsons['categories']){
                                               categories.add(json.toTitleCase());
                                             }
+                                            categories.sort((a, b) {
+                                              return a.toLowerCase().compareTo(b.toLowerCase());
+                                            });
+                                            TextEditingController searchCatCont = TextEditingController();
+                                            return StatefulBuilder(
+                                              builder: (context,stateSearchCat) {
+                                                List<String> searchCats = [];
+                                                for(String cat in categories){
+                                                  if(cat.toLowerCase().contains(searchCatCont.text.toLowerCase())){
+                                                    searchCats.add(cat);
+                                                  }
+                                                }
+                                                return Column(
 
-                                            return CustomToggleButtons(
-                                                onChange: (values){
-                                                  // setState(() {
-                                                  //   selectedCategories = values;
-                                                  // });
-                                                },
-                                                height: MediaQuery.of(context).size.height*.70,
-                                                names: categories
+                                                  children: [
+                                                    CustomTextField(
+                                                      radiusAll: 20,
+                                                      color: Colors.white,
+                                                      onChange: (value){
+                                                        stateSearchCat((){
+
+                                                        });
+                                                      },
+                                                      hint: 'Search Category...',
+                                                      controller: searchCatCont,
+                                                    ),
+                                                    CustomToggleButtons(
+                                                        value: selectedCategories,
+                                                        onChange: (values){
+                                                          setState(() {
+                                                            selectedCategories = values;
+                                                          });
+                                                        },
+                                                        height: MediaQuery.of(context).size.height*.55,
+                                                        names: searchCatCont.text.isNotEmpty?searchCats:categories
+                                                    ),
+                                                  ],
+                                                );
+                                              }
                                             );
                                           }
                                       ),
@@ -309,7 +259,7 @@ class _ResultState extends State<Result> {
                                       Padding(
                                         padding: const EdgeInsets.symmetric(horizontal: 10),
                                         child: FutureBuilder<String?>(
-                                          future: DBController.get(command: "generate_topic", parameters: {"words":searchController.text}),
+                                          future: DBController.get(command: "generate_topic", parameters: {"words":searchController.text+" "+catToString(" ")}),
                                           builder: (BuildContext context, snapshot)
                                           {
                                               if(!snapshot.hasData)return Center(child:  Lottie.network('https://assets4.lottiefiles.com/packages/lf20_7fwvvesa.json',width:  MediaQuery.of(context).size.width*.1,fit: BoxFit.fitWidth),);
@@ -318,10 +268,14 @@ class _ResultState extends State<Result> {
                                               }
                                               var jsons = jsonDecode(snapshot.data!);
                                               List<RecommendedTopic> recommendedTopics = [];
-                                              print(jsons);
+
+
                                               for(var json in jsons){
                                                 recommendedTopics.add(RecommendedTopic.toObject(json));
                                               }
+                                              recommendedTopics.sort((a, b) {
+                                                return a.topic.toLowerCase().compareTo(b.topic.toLowerCase());
+                                              });
                                               return SizedBox(
                                                 height: MediaQuery.of(context).size.height*.70,
                                                 child: ListView(
@@ -404,20 +358,40 @@ class _ResultState extends State<Result> {
                                         child: SelectableText("Related Studies",style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
                                       ),
                                       FutureBuilder<String?>(
-                                          future: DBController.getSearch(words: word),
+                                          future: selectedCategories.isNotEmpty&&word.isEmpty?DBController.get(command: "get_all_thesis", parameters: {}):DBController.getSearch(words: word),
                                           builder:(context,snapshot){
 
                                             if(!snapshot.hasData)return Center(child:  Lottie.network('https://assets4.lottiefiles.com/packages/lf20_7fwvvesa.json',width:  MediaQuery.of(context).size.width*.1,fit: BoxFit.fitWidth),);
                                             if(snapshot.connectionState==ConnectionState.waiting) {
                                               return Center(child:  Lottie.network('https://assets4.lottiefiles.com/packages/lf20_7fwvvesa.json',width:  MediaQuery.of(context).size.width*.1,fit: BoxFit.fitWidth),);
                                             }
-                                            // print(snapshot.data!);
+
                                             var jsonObject = jsonDecode(snapshot.data!);
                                             List<SearchResult> rResults = [];
 
                                             for(var jsObject in jsonObject){
-                                              rResults.add(SearchResult.toObject(jsObject));
+                                              SearchResult sResult = SearchResult.toObject(jsObject);
+                                              if(rResults.where((element) => element.ID==sResult.ID).isNotEmpty)continue;
+                                              if(selectedCategories.isNotEmpty){
+                                                for(String cat in selectedCategories){
+                                                  List<String> tCats = sResult.CATEGORY.split(",");
+                                                  for(String tCat in tCats){
+                                                    if(tCat.toLowerCase().contains(cat.toLowerCase())){
+                                                      rResults.add(sResult);
+                                                    }
+                                                  }
+
+                                                }
+                                              }
+                                              else{
+
+                                                rResults.add(sResult);
+                                              }
+
+
+
                                             }
+                                            // print(catToString(","));
                                             if(rResults.isEmpty) {
                                               return Container(
                                                 alignment: Alignment.center,
@@ -446,7 +420,7 @@ class _ResultState extends State<Result> {
                                                       builder: (context,stateTitle) {
                                                         return InkWell(
                                                           onHover: (value){
-                                                            print(value);
+                                                            // print (value);
                                                             stateTitle((){
                                                               isHover = isHover?false:true;
 

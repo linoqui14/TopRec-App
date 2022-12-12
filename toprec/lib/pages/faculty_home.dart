@@ -255,7 +255,7 @@ class FacultyHomeState extends State<FacultyHome>{
                                                       CustomTextField(hint: "Abstract", controller: abstract,lines: 6,color: Colors.white),
                                                       CustomTextField(hint: "Author/s separated by comma", controller: author,lines: 1,color: Colors.white),
                                                       CustomTextField(hint: "Adviser/s separated by comma", controller: adviser,lines: 1,color: Colors.white),
-                                                      CustomTextField(hint: "Members", controller: members,lines: 1,color: Colors.white),
+                                                      // CustomTextField(hint: "Members", controller: members,lines: 1,color: Colors.white),
                                                       CustomTextField(hint: "Recommendation", controller: recommendation,lines:3,color: Colors.white),
                                                       CustomTextField(hint: "Keyword/s separated by comma", controller: keywords,lines: 1,color: Colors.white),
                                                       CustomTextField(hint: "Category", controller: category,lines: 1,color: Colors.white),
@@ -293,6 +293,7 @@ class FacultyHomeState extends State<FacultyHome>{
                                                           RECOMMENDATION: recommendation.text,
                                                           KEYWORDS: keywords.text,
                                                           TAGS: '',
+                                                          FACULTY: widget.user.username
 
                                                       );
                                                       Tools.basicDialog(
@@ -350,7 +351,7 @@ class FacultyHomeState extends State<FacultyHome>{
                             color: MyColors.secondary,
                           ),
                           borderRadius: BorderRadius.all(Radius.circular(20)),
-                          color: MyColors.darkPrimary.withAlpha(200)
+                          color: Colors.white.withAlpha(150)
                       ),
                       child: FutureBuilder<String?>(
                         future: DBController.get(command: "get_all_thesis", parameters: {}),
@@ -363,24 +364,22 @@ class FacultyHomeState extends State<FacultyHome>{
                           var jsonObjects = jsonDecode(snapshot.data!);
                           for(var json in jsonObjects){
                             SearchResult result = SearchResult.toObject(json);
-
-                            print(result.CATEGORY);
                             if(result.CATEGORY.replaceAll(" ", "") .isEmpty&&searchResults.where((element) => element.TITLE.toLowerCase() == result.TITLE.toLowerCase()).isEmpty){
                               searchResults.add(result);
                             }
-                            // else if(searchResult.where((element) => element.TITLE.toLowerCase() == result.TITLE.toLowerCase()).isEmpty&&searchController.text.isEmpty){
-                            //   searchResult.add(result);
-                            // }
-                            // if(searchController.text.isNotEmpty){
-                            //     if(
-                            //           result.TITLE.toLowerCase().contains(searchController.text.toLowerCase())||
-                            //           result.YEAR.toLowerCase().contains(searchController.text.toLowerCase())||
-                            //           result.MONTH.toLowerCase().contains(searchController.text.toLowerCase())||
-                            //           result.AUTHOR.toLowerCase().contains(searchController.text.toLowerCase())
-                            //     ){
-                            //       searchResult.add(result);
-                            //     }
-                            // }
+                            else if(searchResults.where((element) => element.TITLE.toLowerCase() == result.TITLE.toLowerCase()).isEmpty&&searchController.text.isEmpty){
+                              searchResults.add(result);
+                            }
+                            if(searchController.text.isNotEmpty){
+                                if(
+                                      result.TITLE.toLowerCase().contains(searchController.text.toLowerCase())||
+                                      result.YEAR.toLowerCase().contains(searchController.text.toLowerCase())||
+                                      result.MONTH.toLowerCase().contains(searchController.text.toLowerCase())||
+                                      result.AUTHOR.toLowerCase().contains(searchController.text.toLowerCase())
+                                ){
+                                  searchResults.add(result);
+                                }
+                            }
 
                           }
                           // print(searchResult[0].);
@@ -440,9 +439,9 @@ class FacultyHomeState extends State<FacultyHome>{
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Container(
-
+                                                  width:double.infinity,
                                                   decoration: BoxDecoration(
-                                                      color: MyColors.secondary,
+                                                      color:MyColors.darkPrimary,
 
                                                       borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight:Radius.circular(20),bottomRight: Radius.circular(20),)
                                                   ),
@@ -450,26 +449,28 @@ class FacultyHomeState extends State<FacultyHome>{
                                                   child: Column(
                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: [
-                                                      SelectableText(re.TITLE.replaceAll("\n", ""),style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color:MyColors.darkPrimary),),
-                                                      SelectableText(re.AUTHOR.replaceAll("\n", ",")),
-                                                      SelectableText(re.YEAR.replaceAll("\n", "")+" "+re.MONTH.replaceAll("\n", ""),style: TextStyle(fontWeight: FontWeight.w100,fontSize: 10),)
+                                                      SelectableText(re.TITLE.replaceAll("\n", "").toTitleCase(),style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color:Colors.white),),
+                                                      // SelectableText(re.AUTHOR.replaceAll("\n", ",")),
+                                                      // SelectableText(re.YEAR.replaceAll("\n", "")+" "+re.MONTH.replaceAll("\n", ""),style: TextStyle(fontWeight: FontWeight.w100,fontSize: 10),)
                                                     ],
                                                   )
                                               ),
-                                              Container(
-                                                  padding: EdgeInsets.all(10),
-                                                  decoration: BoxDecoration(
-                                                      color: MyColors.darkPrimary,
-                                                      // border: Border.all(
-                                                      //   width: 3,
-                                                      //   // color: Color(0xff839198),
-                                                      // ),
-                                                      borderRadius: BorderRadius.only(topRight:Radius.circular(20),bottomRight: Radius.circular(0),bottomLeft: Radius.circular(20))
-                                                  ),
-                                                  child: SelectableText(re.ABTRACT.replaceAll("\n", ""),style: TextStyle(color: Colors.white),)
-                                              ),
+                                              // Container(
+                                              //     padding: EdgeInsets.all(10),
+                                              //     decoration: BoxDecoration(
+                                              //         color: MyColors.darkPrimary,
+                                              //         // border: Border.all(
+                                              //         //   width: 3,
+                                              //         //   // color: Color(0xff839198),
+                                              //         // ),
+                                              //         borderRadius: BorderRadius.only(topRight:Radius.circular(20),bottomRight: Radius.circular(0),bottomLeft: Radius.circular(20))
+                                              //     ),
+                                              //     child: SelectableText(re.ABTRACT.replaceAll("\n", ""),style: TextStyle(color: Colors.white),)
+                                              // ),
                                               CustomTextButton(
-                                                color: MyColors.darkPrimary,
+                                                rTl: 0,
+                                                rTR: 0,
+                                                color: MyColors.secondary,
                                                 text: "Edit",
                                                 onPressed: (){
 
@@ -576,6 +577,7 @@ class FacultyHomeState extends State<FacultyHome>{
                                                                                             });
                                                                                           },
                                                                                           items: years.map<DropdownMenuItem<String>>((e) {
+
                                                                                             return DropdownMenuItem(
                                                                                                 value: e,
                                                                                                 child: Text(e,style: TextStyle(color:Colors.white),)
@@ -592,7 +594,7 @@ class FacultyHomeState extends State<FacultyHome>{
                                                                             CustomTextField(hint: "Abstract", controller: abstract,lines: 6,color: Colors.white),
                                                                             CustomTextField(hint: "Author/s separated by comma", controller: author,lines: 1,color: Colors.white),
                                                                             CustomTextField(hint: "Adviser/s separated by comma", controller: adviser,lines: 1,color: Colors.white),
-                                                                            CustomTextField(hint: "Members", controller: members,lines: 1,color: Colors.white),
+                                                                            // CustomTextField(hint: "Members", controller: members,lines: 1,color: Colors.white),
                                                                             CustomTextField(hint: "Recommendation", controller: recommendation,lines:3,color: Colors.white),
                                                                             CustomTextField(hint: "Keyword/s separated by comma", controller: keywords,lines: 1,color: Colors.white),
                                                                             CustomTextField(hint: "Category", controller: category,lines: 1,color: Colors.white),
