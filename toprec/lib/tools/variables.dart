@@ -22,7 +22,7 @@ class Constants{
   static String hostname = Platform.localHostname;
 }
 class DBController{
-  static String ip = "192.168.1.6";
+  static String ip = "127.0.0.1";
   static Future<bool> testConnection() async{
     String phpurl = "http://$ip:5000/is_connected";
     var res = await http.post(Uri.parse(phpurl), body: {
@@ -33,7 +33,7 @@ class DBController{
   static Future<User?> getUser({required String username,required String password}) async{
     String phpurl = "http://$ip:5000/get_user";
     var res = await http.post(Uri.http('$ip:5000','/get_user'),body: {'username':username,'password':password});
-    // print(res.body);
+    print(res.body);
     try {
       User user = User.toObject(json.decode(res.body));
       return user;
@@ -42,6 +42,7 @@ class DBController{
       return null;
     }
   }
+
   static Future<String?> getRecommended({required String words}) async{
     String phpurl = "http://$ip:5000/generate_topic";
     var res = await http.post(Uri.http('$ip:5000','/generate_topic'),body: {'words':words,});
@@ -69,6 +70,35 @@ class DBController{
     //   return null;
     // }
   }
+  static Future<String?> get({required String command,required Map<String,dynamic> parameters}) async{
+    var res = await http.post(Uri.http('$ip:5000','/$command'),body: parameters);
+    // print(res.body);
+    return res.body;
+
+    //
+    // try {
+    //   User user = User.toObject(json.decode(res.body));
+    //   return user;
+    // }
+    // catch(e){
+    //   return null;
+    // }
+  }
+  static Future<String?> post({required String command,required Map<String,dynamic> parameters}) async{
+    var res = await http.post(Uri.http('$ip:5000','/$command'),body: parameters);
+    // print(res.body);
+    return res.body;
+
+    //
+    // try {
+    //   User user = User.toObject(json.decode(res.body));
+    //   return user;
+    // }
+    // catch(e){
+    //   return null;
+    // }
+  }
+
 
 
   static Future<bool> createUser({required User user}) async{
@@ -80,7 +110,7 @@ class DBController{
 
   static Future<bool> updateUser({required User user}) async{
     var res = await http.post(Uri.http('$ip:5000','/update_user'),body: user.toMap(isNew: false));
-    // print(user.recentSearch);
+    print(res.body);
     return res.body.split("{").length>1?true:false;
   }
 
@@ -100,7 +130,7 @@ class Tools{
   //   await file.writeAsBytes(bytes);
   //   return file;
   // }
-  Future<void> basicDialog({
+  static Future<void> basicDialog({
     required BuildContext context,
     required StatefulBuilder statefulBuilder
   }) async {
@@ -114,4 +144,24 @@ class Tools{
   }
 
 
+}
+List<String> exceptions = ['a','abaft','about','above','afore','after','along',
+  'amid','among','an','apud','as','aside','at','atop',
+  'below','but','by','circa','down','for','from','given',
+  'in','into','lest','like','mid','midst','minus','near',
+  'next','of','off','on','onto','out','over','pace','past',
+  'per','plus','pro','qua','round','sans','save','since','than',
+  'thru','till','times','to','under','until','unto','up','upon',
+  'via','vice','with','worth','the","and','nor','or','yet','so'];
+
+extension TitleCase on String {
+  String toTitleCase() {
+    return this.toLowerCase().replaceAllMapped(RegExp(r'[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+'),
+            (Match match) {
+          if (exceptions.contains(match[0])) {
+            return match[0]!;
+          }
+          return "${match[0]![0].toUpperCase()}${match[0]!.substring(1).toLowerCase()}";
+        }).replaceAll(RegExp(r'(_|-)+'), ' ');
+  }
 }

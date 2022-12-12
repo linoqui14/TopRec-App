@@ -28,7 +28,8 @@ class CustomTextField extends StatefulWidget{
     this.alignment,
     this.radiusAll,
     this.fillColor,
-    this.onEnter
+    this.onEnter,
+    this.lines = 1
   }) : super(key: key);
 
   final String hint;
@@ -48,6 +49,7 @@ class CustomTextField extends StatefulWidget{
   bool enable;
   bool readonly;
   double? radiusAll;
+  int lines;
   TextEditingController controller;
   TextAlign? alignment;
   Color? fillColor;
@@ -68,8 +70,8 @@ class _CustomTextFieldState extends State<CustomTextField>{
       child: TextField(
         textAlign: widget.alignment!=null?widget.alignment!:TextAlign.start,
         keyboardType: widget.keyBoardType!=null?widget.keyBoardType!:TextInputType.text,
-        minLines: 1,
-        maxLines: widget.obscureText?1:3,
+        minLines: widget.lines,
+        maxLines: widget.obscureText?1:10,
         readOnly: widget.readonly,
         enabled:widget.enable,
         controller: widget.controller,

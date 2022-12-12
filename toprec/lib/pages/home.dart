@@ -1,11 +1,13 @@
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:lottie/lottie.dart';
 import 'package:toprec/custom_widgets/custom_toggle_buttons.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:toprec/pages/faculty_home.dart';
 import 'package:toprec/pages/login.dart';
 import 'package:toprec/pages/result.dart';
 import 'package:toprec/tools/variables.dart';
@@ -21,14 +23,14 @@ class Home extends StatefulWidget{
 }
 
 class _HomeState extends State<Home>{
-  TextEditingController searchController =TextEditingController();
+  TextEditingController searchController = TextEditingController();
   List<String> selectedCategories = [];
 
 
   @override
   void initState() {
     DBController.getUser(username: widget.user.username, password: widget.user.password).then((value){
-     // print(value!.recentSearch);
+     print(value!.recentSearch);
       if(value!.recentSearch.isNotEmpty&&value!=null){
         Navigator.pushAndRemoveUntil(
           context,
@@ -42,12 +44,18 @@ class _HomeState extends State<Home>{
   }
   @override
   Widget build(BuildContext context) {
+
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
         backgroundColor:MyColors.primary,
         elevation: 0,
-        title:  Text("TOPREC",style: TextStyle(fontFamily: 'Tually',color: Colors.white,fontSize: MediaQuery.of(context).size.width*.02),),
+        title:  Row(
+          children: [
+            SelectableText("TOPREC   ",style: TextStyle(fontFamily: 'Tually',color: Colors.white,fontSize: MediaQuery.of(context).size.width*.02),),
+            SelectableText(widget.user.type.toLowerCase())
+          ],
+        ),
         actions: [
           if(true)
             Container(
@@ -58,16 +66,30 @@ class _HomeState extends State<Home>{
                     onPressed: (){
 
                     },
-                    child: Text("Contact",style: TextStyle(color: Colors.white),),
+                    child: SelectableText("Contact",style: TextStyle(color: Colors.white),),
                   ),
                   Padding(padding: EdgeInsets.symmetric(horizontal: 20)),
                   TextButton(
                     onPressed: (){
 
                     },
-                    child: Text("About",style: TextStyle(color: Colors.white),),
+                    child: SelectableText("About",style: TextStyle(color: Colors.white),),
                   ),
                   Padding(padding: EdgeInsets.symmetric(horizontal: 20)),
+
+                  if(widget.user.type.toUpperCase().compareTo(UserType.FACULTY.toUpperCase())>=0)
+                    TextButton(
+                      onPressed: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => FacultyHome(user: widget.user)),
+
+                        );
+                      },
+                      child: Text("Manage Theses",style: TextStyle(color: Colors.white),),
+                    ),
+                  if(widget.user.type.toUpperCase().compareTo(UserType.FACULTY.toUpperCase())>=0)
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 20)),
                   if(true)//if login page
                     TextButton(
                       style: ButtonStyle(
@@ -98,7 +120,7 @@ class _HomeState extends State<Home>{
 
                         });
                       },
-                      child: Text("Logout",style: TextStyle(color: Colors.white),),
+                      child: SelectableText("Logout",style: TextStyle(color: Colors.white),),
                     ),
 
                 ],
@@ -120,7 +142,7 @@ class _HomeState extends State<Home>{
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text("Search for",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w100,fontSize: 50,fontFamily: "Uni Sans"),),
+                      SelectableText("Search for",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w100,fontSize: 50,fontFamily: "Uni Sans"),),
                       Container(
                         margin: EdgeInsets.only(left: 55),
                         child: AnimatedTextKit(
@@ -183,6 +205,7 @@ class _HomeState extends State<Home>{
                                   }
                                   widget.user.recentSearch = word;
                                   DBController.updateUser(user:widget.user ).then((value) {
+
                                     Navigator.pushAndRemoveUntil(
                                       context,
                                       MaterialPageRoute(builder: (context) => Result(user: widget.user,word: word,)),
@@ -206,7 +229,7 @@ class _HomeState extends State<Home>{
                           Container(
                             margin: EdgeInsets.all(5),
                             width: MediaQuery.of(context).size.width*.15,
-                            height: MediaQuery.of(context).size.height*.5,
+                            height: MediaQuery.of(context).size.height*.65,
                             decoration: BoxDecoration(
                                 color: MyColors.darkPrimary.withAlpha(200),
                                 border: Border.all(
@@ -229,19 +252,33 @@ class _HomeState extends State<Home>{
                                       ),
                                       borderRadius: BorderRadius.all(Radius.circular(18))
                                   ),
-                                  child: Text("Technology Categories",style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
+                                  child: SelectableText("Technology Categories",style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
                                 ),
                                 Padding(padding: EdgeInsets.all(10)),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                                  child: CustomToggleButtons(
-                                      onChange: (values){
-                                        setState(() {
-                                          selectedCategories = values;
-                                        });
-                                      },
-                                      height: MediaQuery.of(context).size.height*.3,
-                                      names: ['Internet of Things','Machine Learning','Artificial Intelegent(AI)','Natural Language Processing','Deep Learning','Big Data & Data Science','Block Chain Technology']
+                                  child: FutureBuilder<String?>(
+                                    future: DBController.post(command: "get_categories", parameters: {}),
+                                    builder: (context,snapshot) {
+                                      if(!snapshot.hasData)return Center(child:  Lottie.network('https://assets4.lottiefiles.com/packages/lf20_7fwvvesa.json',width:  MediaQuery.of(context).size.width*.1,fit: BoxFit.fitWidth),);
+                                      if(snapshot.connectionState==ConnectionState.waiting) {
+                                        return Center(child:  Lottie.network('https://assets4.lottiefiles.com/packages/lf20_7fwvvesa.json',width:  MediaQuery.of(context).size.width*.1,fit: BoxFit.fitWidth),);
+                                      }
+                                      List<String> categories = [];
+                                      var jsons = jsonDecode(snapshot.data!);
+                                      for(String json in jsons['categories']){
+                                        categories.add(json.toTitleCase());
+                                      }
+                                      return CustomToggleButtons(
+                                          onChange: (values){
+                                            // setState(() {
+                                            //   selectedCategories = values;
+                                            // });
+                                          },
+                                          height: MediaQuery.of(context).size.height*.5,
+                                          names: categories
+                                      );
+                                    }
                                   ),
                                 )
                               ],

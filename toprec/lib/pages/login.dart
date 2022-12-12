@@ -37,11 +37,15 @@ class _LoginState extends State<Login> {
 
             username.text = user.username;
             password.text = user.password;
+
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => Home(user: user,)),
                   (Route<dynamic> route) => false,
             );
+
+
+
           }
           else{
             setState(() {
@@ -227,6 +231,7 @@ class _LoginState extends State<Login> {
                                                 //    print(value);
                                                 //  });
                                                 if(password.text.isNotEmpty&&username.text.isNotEmpty){
+
                                                   DBController.getUser(username: username.text, password: password.text).then((value){
 
                                                     if(value!=null){
@@ -239,8 +244,9 @@ class _LoginState extends State<Login> {
                                                         users.then((user) {
                                                           user.put('currently-login',value.toMap(isNew: false));
                                                           user.get('currently-login').then((result) {
+
                                                             if(result!=null){
-                                                              User userR = User.toObject(result!);
+                                                              User userR = User.toObject(result);
                                                               Navigator.pushAndRemoveUntil(
                                                                 context,
                                                                 MaterialPageRoute(builder: (context) => Home(user: userR,)),

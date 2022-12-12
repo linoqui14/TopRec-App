@@ -7,8 +7,18 @@ class UserType{
 
 
 class User{
-  String id,type,username,password,recentSearch,currentSelected;
-  User({this.id = '', required this.type, required this.username, required this.password,this.recentSearch = '',this.currentSelected = ''});
+  String id,type,username,password,recentSearch,currentSelected,firstname,lastname,idNumber;
+  User({
+        this.id = '',
+        required this.type,
+        required this.username,
+        required this.password,
+        this.recentSearch = '',
+        this.currentSelected = '',
+        this.firstname='n/a',
+        this.lastname='n/a',
+        this.idNumber='n/a'
+      });
 
   Map<String,dynamic> toMap({required bool isNew}){
     return {
@@ -17,7 +27,10 @@ class User{
       'type':type,
       'password':password,
       'recentSearch':recentSearch,
-      'currentSelected':currentSelected
+      'currentSelected':currentSelected,
+      'firstname':firstname,
+      'lastname':lastname,
+      'idNumber':idNumber,
     };
   }
 
@@ -31,13 +44,17 @@ class User{
     }catch(e){
       recentSearch = '';
     }
+
     return User(
         id: object['id'].toString(),
         username: object['username'],
         type: object['type'],
         password: object['password'],
         recentSearch:recentSearch,
-        currentSelected:currentSelected
+        currentSelected:currentSelected,
+        lastname:object['lastname'],
+        idNumber:object['idNumber'],
+        firstname:object['firstname']
     );
   }
 

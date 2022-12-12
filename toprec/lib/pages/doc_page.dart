@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:lottie/lottie.dart';
 import 'package:toprec/models/search_result.dart';
+import 'package:toprec/pages/faculty_home.dart';
 import '../custom_widgets/custom_text_field.dart';
 import '../models/user.dart';
 import '../tools/variables.dart';
@@ -24,7 +25,7 @@ class _DocumentPageSate extends State<DocumentPage>{
       appBar: AppBar(
         backgroundColor:MyColors.primary,
         elevation: 0,
-        title:  Text("TOPREC",style: TextStyle(fontFamily: 'Tually',color: Colors.white,fontSize: MediaQuery.of(context).size.width*.02),),
+        title:  SelectableText("TOPREC",style: TextStyle(fontFamily: 'Tually',color: Colors.white,fontSize: MediaQuery.of(context).size.width*.02),),
         actions: [
           if(true)
             Container(
@@ -35,16 +36,29 @@ class _DocumentPageSate extends State<DocumentPage>{
                     onPressed: (){
 
                     },
-                    child: Text("Contact",style: TextStyle(color: Colors.white),),
+                    child: SelectableText("Contact",style: TextStyle(color: Colors.white),),
                   ),
                   Padding(padding: EdgeInsets.symmetric(horizontal: 20)),
                   TextButton(
                     onPressed: (){
 
                     },
-                    child: Text("About",style: TextStyle(color: Colors.white),),
+                    child: SelectableText("About",style: TextStyle(color: Colors.white),),
                   ),
                   Padding(padding: EdgeInsets.symmetric(horizontal: 20)),
+                  if(widget.user.type.toUpperCase().compareTo(UserType.FACULTY.toUpperCase())>=0)
+                    TextButton(
+                      onPressed: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => FacultyHome(user: widget.user)),
+
+                        );
+                      },
+                      child: Text("Manage Theses",style: TextStyle(color: Colors.white),),
+                    ),
+                  if(widget.user.type.toUpperCase().compareTo(UserType.FACULTY.toUpperCase())>=0)
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 20)),
                   if(true)//if login page
                     TextButton(
                       style: ButtonStyle(
@@ -75,7 +89,7 @@ class _DocumentPageSate extends State<DocumentPage>{
 
                         });
                       },
-                      child: Text("Logout",style: TextStyle(color: Colors.white),),
+                      child: SelectableText("Logout",style: TextStyle(color: Colors.white),),
                     ),
 
                 ],
@@ -105,13 +119,13 @@ class _DocumentPageSate extends State<DocumentPage>{
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(widget.searchResult.TITLE.replaceAll("\n", ""),style: TextStyle(fontSize: 50,color: Colors.white,fontWeight: FontWeight.bold),),
+                        SelectableText(widget.searchResult.TITLE.replaceAll("\n", ""),style: TextStyle(fontSize: 50,color: Colors.white,fontWeight: FontWeight.bold),),
                         Container(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(widget.searchResult.AUTHOR.replaceAll("\n", ""),style: TextStyle(color: Colors.white),),
-                              Text(widget.searchResult.YEAR.replaceAll("\n", "")+" "+widget.searchResult.MONTH.replaceAll("\n", ""),style: TextStyle(color: Colors.white,fontWeight: FontWeight.w100,fontSize: 10),)
+                              SelectableText(widget.searchResult.AUTHOR.replaceAll("\n", ""),style: TextStyle(color: Colors.white),),
+                              SelectableText(widget.searchResult.YEAR.replaceAll("\n", "")+" "+widget.searchResult.MONTH.replaceAll("\n", ""),style: TextStyle(color: Colors.white,fontWeight: FontWeight.w100,fontSize: 10),)
                             ],
                           ),
                         ),
@@ -143,7 +157,7 @@ class _DocumentPageSate extends State<DocumentPage>{
 
                                           borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight:Radius.circular(20),bottomRight: Radius.circular(20),)
                                       ),
-                                      child: Text("Abstract",style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
+                                      child: SelectableText("Abstract",style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
                                     ),
                                     Container(
                                       width: MediaQuery.of(context).size.width*.8,
@@ -155,7 +169,7 @@ class _DocumentPageSate extends State<DocumentPage>{
 
                                           borderRadius: BorderRadius.only(topLeft: Radius.circular(0),topRight:Radius.circular(20),bottomRight: Radius.circular(20),bottomLeft: Radius.circular(20))
                                       ),
-                                      child: Text(widget.searchResult.ABTRACT.replaceAll("\n", ""),style: TextStyle(color: Colors.white,fontSize: 15,),),
+                                      child: SelectableText(widget.searchResult.ABTRACT.replaceAll("\n", ""),style: TextStyle(color: Colors.white,fontSize: 15,),),
                                     ),
                                   ],
                                 ),
@@ -170,7 +184,7 @@ class _DocumentPageSate extends State<DocumentPage>{
 
                                           borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight:Radius.circular(20),bottomRight: Radius.circular(20),)
                                       ),
-                                      child: Text("Recommendation",style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
+                                      child: SelectableText("Recommendation",style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
                                     ),
                                     Container(
                                       width: MediaQuery.of(context).size.width*.8,
@@ -182,7 +196,7 @@ class _DocumentPageSate extends State<DocumentPage>{
 
                                           borderRadius: BorderRadius.only(topLeft: Radius.circular(0),topRight:Radius.circular(20),bottomRight: Radius.circular(20),bottomLeft: Radius.circular(20))
                                       ),
-                                      child: Text(widget.searchResult.RECOMMENDATION.replaceAll("\n", ""),style: TextStyle(color: Colors.white,fontSize: 15,),),
+                                      child: SelectableText(widget.searchResult.RECOMMENDATION.replaceAll("\n", ""),style: TextStyle(color: Colors.white,fontSize: 15,),),
                                     ),
                                   ],
                                 ),
@@ -197,7 +211,7 @@ class _DocumentPageSate extends State<DocumentPage>{
 
                                           borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight:Radius.circular(20),bottomRight: Radius.circular(20),)
                                       ),
-                                      child: Text("Key Words",style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
+                                      child: SelectableText("Key Words",style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
                                     ),
                                     Container(
                                       width: MediaQuery.of(context).size.width*.8,
@@ -209,7 +223,7 @@ class _DocumentPageSate extends State<DocumentPage>{
 
                                           borderRadius: BorderRadius.only(topLeft: Radius.circular(0),topRight:Radius.circular(20),bottomRight: Radius.circular(20),bottomLeft: Radius.circular(20))
                                       ),
-                                      child: Text(widget.searchResult.KEYWORDS.replaceAll("\n", "")=='nan'?"Doesn't have Key words":widget.searchResult.KEYWORDS.replaceAll("\n", ""),style: TextStyle(color: Colors.white,fontSize: 15,),),
+                                      child: SelectableText(widget.searchResult.KEYWORDS.replaceAll("\n", "")=='nan'?"Doesn't have Key words":widget.searchResult.KEYWORDS.replaceAll("\n", ""),style: TextStyle(color: Colors.white,fontSize: 15,),),
                                     ),
                                   ],
                                 ),
@@ -224,7 +238,7 @@ class _DocumentPageSate extends State<DocumentPage>{
 
                                           borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight:Radius.circular(20),bottomRight: Radius.circular(20),)
                                       ),
-                                      child: Text("Adviser",style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
+                                      child: SelectableText("Adviser",style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
                                     ),
                                     Container(
                                       width: MediaQuery.of(context).size.width*.8,
@@ -236,7 +250,7 @@ class _DocumentPageSate extends State<DocumentPage>{
 
                                           borderRadius: BorderRadius.only(topLeft: Radius.circular(0),topRight:Radius.circular(20),bottomRight: Radius.circular(20),bottomLeft: Radius.circular(20))
                                       ),
-                                      child: Text(widget.searchResult.ADVISER.replaceAll("\n", ""),style: TextStyle(color: Colors.white,fontSize: 15,),),
+                                      child: SelectableText(widget.searchResult.ADVISER.replaceAll("\n", ""),style: TextStyle(color: Colors.white,fontSize: 15,),),
                                     ),
                                   ],
                                 ),
@@ -251,7 +265,7 @@ class _DocumentPageSate extends State<DocumentPage>{
 
                                           borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight:Radius.circular(20),bottomRight: Radius.circular(20),)
                                       ),
-                                      child: Text("Member",style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
+                                      child: SelectableText("Member",style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
                                     ),
                                     Container(
                                       width: MediaQuery.of(context).size.width*.8,
@@ -263,7 +277,7 @@ class _DocumentPageSate extends State<DocumentPage>{
 
                                           borderRadius: BorderRadius.only(topLeft: Radius.circular(0),topRight:Radius.circular(20),bottomRight: Radius.circular(20),bottomLeft: Radius.circular(20))
                                       ),
-                                      child: Text(widget.searchResult.MEMBERS.replaceAll("\n", ""),style: TextStyle(color: Colors.white,fontSize: 15,),),
+                                      child: SelectableText(widget.searchResult.MEMBERS.replaceAll("\n", ""),style: TextStyle(color: Colors.white,fontSize: 15,),),
                                     ),
                                   ],
                                 ),

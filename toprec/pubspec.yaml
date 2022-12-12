@@ -39,6 +39,7 @@ dependencies:
   http: ^0.13.5
   hive: ^2.2.3
   animated_text_kit: ^4.2.2
+  month_year_picker: ^0.2.0+2
 dev_dependencies:
   flutter_test:
     sdk: flutter
