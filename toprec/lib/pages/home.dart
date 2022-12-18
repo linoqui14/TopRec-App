@@ -31,7 +31,7 @@ class _HomeState extends State<Home>{
   @override
   void initState() {
     DBController.getUser(username: widget.user.username, password: widget.user.password).then((value){
-     // print(value!.recentSearch);
+      // print(value!.recentSearch);
       if(value!.recentSearch.isNotEmpty&&value!=null){
         Navigator.pushAndRemoveUntil(
           context,
@@ -64,23 +64,23 @@ class _HomeState extends State<Home>{
                     children: [
                       SelectableText("Search for",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w100,fontSize: 50,fontFamily: "Uni Sans"),),
                       StatefulBuilder(
-                        builder: (context,stateTitle) {
-                          _stateTitle = stateTitle;
-                          return Container(
-                            margin: EdgeInsets.only(left: 55),
-                            child: AnimatedTextKit(
+                          builder: (context,stateTitle) {
+                            _stateTitle = stateTitle;
+                            return Container(
+                              margin: EdgeInsets.only(left: 55),
+                              child: AnimatedTextKit(
 
-                              repeatForever: true,
-                              animatedTexts: [
-                                TypewriterAnimatedText("Machine Learning",textAlign: TextAlign.center,textStyle:TextStyle(color: MyColors.secondary,fontWeight: FontWeight.w700,fontSize: 70,fontFamily: "Uni Sans") ,speed: Duration(milliseconds: 150),curve: Curves.easeInOutCubic),
-                                TypewriterAnimatedText("Artificial Intelligent",textAlign: TextAlign.center,textStyle:TextStyle(color: MyColors.secondary,fontWeight: FontWeight.w700,fontSize: 70,fontFamily: "Uni Sans"),speed: Duration(milliseconds: 150),curve: Curves.easeInOutCubic),
-                                TypewriterAnimatedText("Robot",textAlign: TextAlign.center,textStyle:TextStyle(color:MyColors.secondary,fontWeight: FontWeight.w700,fontSize: 70,fontFamily: "Uni Sans"),speed: Duration(milliseconds: 150),curve: Curves.easeInOutCubic),
-                                if(searchController.text.isNotEmpty)
-                                  TypewriterAnimatedText(searchController.text,textAlign: TextAlign.center,textStyle:TextStyle(color:MyColors.secondary,fontWeight: FontWeight.w700,fontSize: 70,fontFamily: "Uni Sans"),speed: Duration(milliseconds: 150),curve: Curves.easeInOutCubic),
-                              ],
-                            ),
-                          );
-                        }
+                                repeatForever: true,
+                                animatedTexts: [
+                                  TypewriterAnimatedText("Machine Learning",textAlign: TextAlign.center,textStyle:TextStyle(color: MyColors.secondary,fontWeight: FontWeight.w700,fontSize: 70,fontFamily: "Uni Sans") ,speed: Duration(milliseconds: 150),curve: Curves.easeInOutCubic),
+                                  TypewriterAnimatedText("Artificial Intelligent",textAlign: TextAlign.center,textStyle:TextStyle(color: MyColors.secondary,fontWeight: FontWeight.w700,fontSize: 70,fontFamily: "Uni Sans"),speed: Duration(milliseconds: 150),curve: Curves.easeInOutCubic),
+                                  TypewriterAnimatedText("Robot",textAlign: TextAlign.center,textStyle:TextStyle(color:MyColors.secondary,fontWeight: FontWeight.w700,fontSize: 70,fontFamily: "Uni Sans"),speed: Duration(milliseconds: 150),curve: Curves.easeInOutCubic),
+                                  if(searchController.text.isNotEmpty)
+                                    TypewriterAnimatedText(searchController.text,textAlign: TextAlign.center,textStyle:TextStyle(color:MyColors.secondary,fontWeight: FontWeight.w700,fontSize: 70,fontFamily: "Uni Sans"),speed: Duration(milliseconds: 150),curve: Curves.easeInOutCubic),
+                                ],
+                              ),
+                            );
+                          }
                       )
                     ],
                   ),
@@ -106,6 +106,7 @@ class _HomeState extends State<Home>{
                               Expanded(
                                 child: CustomTextField(
                                   onChange: (value){
+
                                     _stateTitle(() {
 
                                     });
@@ -123,7 +124,7 @@ class _HomeState extends State<Home>{
                                 radiusAll: 50,
                                 width: 50,
                                 height: 46,
-                                onPressed:(selectedCategories.isNotEmpty||searchController.text.isNotEmpty)? (){
+                                onPressed:(){
                                   String word = searchController.text;
                                   widget.user.recentSearch = word;
                                   DBController.updateUser(user:widget.user ).then((value) {
@@ -135,8 +136,8 @@ class _HomeState extends State<Home>{
                                     // print(value);
                                   });
 
-                                }:null,
-                                color: selectedCategories.length>0||searchController.text.isNotEmpty?MyColors.secondary:MyColors.darkPrimary.withAlpha(120),
+                                },
+                                color:MyColors.secondary,
 
                                 text: "Go",
                               ),
@@ -180,10 +181,13 @@ class _HomeState extends State<Home>{
                                         if(snapshot.connectionState==ConnectionState.waiting) {
                                           return Center(child:  Lottie.network('https://assets4.lottiefiles.com/packages/lf20_7fwvvesa.json',width:  MediaQuery.of(context).size.width*.1,fit: BoxFit.fitWidth),);
                                         }
-                                        List<String> categories = [];
+
                                         var jsons = jsonDecode(snapshot.data!);
                                         for(String json in jsons['categories']){
-                                          categories.add(json.toTitleCase());
+                                          if(!categories.contains(json.toTitleCase())){
+                                            categories.add(json.toTitleCase());
+                                          }
+
                                         }
                                         categories.sort((a, b) {
                                           return a.toLowerCase().compareTo(b.toLowerCase());

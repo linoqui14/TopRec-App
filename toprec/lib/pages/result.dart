@@ -110,7 +110,7 @@ class _ResultState extends State<Result> {
                                   radiusAll: 50,
                                   width: 50,
                                   height: 46,
-                                  onPressed:(selectedCategories.isNotEmpty||searchController.text.isNotEmpty)? (){
+                                  onPressed:(){
                                     // if(selectedCategories.isNotEmpty&&searchController.text.isNotEmpty){
                                     //   searchController.text = "";
                                     //   return;
@@ -126,8 +126,8 @@ class _ResultState extends State<Result> {
                                       });
                                     });
 
-                                  }:null,
-                                  color: selectedCategories.length>0||searchController.text.isNotEmpty?MyColors.secondary:Color(0xff031620).withAlpha(120),
+                                  },
+                                  color:MyColors.secondary,
 
                                   text: "Go",
                                 ),
@@ -226,107 +226,105 @@ class _ResultState extends State<Result> {
                                   ],
                                 ),
                               ),
-                              Expanded(
-                                child: Container(
-                                  margin: EdgeInsets.all(5),
-                                  height: MediaQuery.of(context).size.height*.8,
-                                  // height: MediaQuery.of(context).size.height*.5,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white.withAlpha(100),
-                                      border: Border.all(
-                                        width: 3,
-                                        color: MyColors.secondary,
+                              Container(
+                                margin: EdgeInsets.all(5),
+                                width: MediaQuery.of(context).size.width*.35,
+                                // height: MediaQuery.of(context).size.height*.5,
+                                decoration: BoxDecoration(
+                                    color: Colors.white.withAlpha(100),
+                                    border: Border.all(
+                                      width: 3,
+                                      color: MyColors.secondary,
+                                    ),
+                                    borderRadius: BorderRadius.all(Radius.circular(20))
+                                ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      alignment: Alignment.center,
+                                      height: 40,
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                          color: MyColors.darkPrimary,
+                                          border: Border.all(
+                                            width: 0,
+                                            color: MyColors.secondary,
+                                          ),
+                                          borderRadius: BorderRadius.only(topRight:Radius.circular(18),topLeft: Radius.circular(18))
                                       ),
-                                      borderRadius: BorderRadius.all(Radius.circular(20))
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        alignment: Alignment.center,
-                                        height: 40,
-                                        width: double.infinity,
-                                        decoration: BoxDecoration(
-                                            color: MyColors.darkPrimary,
-                                            border: Border.all(
-                                              width: 0,
-                                              color: MyColors.secondary,
-                                            ),
-                                            borderRadius: BorderRadius.only(topRight:Radius.circular(18),topLeft: Radius.circular(18))
-                                        ),
-                                        child: SelectableText("Recommended Topic",style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
-                                      ),
-                                      Padding(padding: EdgeInsets.all(10)),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                                        child: FutureBuilder<String?>(
-                                          future: DBController.get(command: "generate_topic", parameters: {"words":searchController.text+" "+catToString(" ")}),
-                                          builder: (BuildContext context, snapshot)
-                                          {
-                                              if(!snapshot.hasData)return Center(child:  Lottie.network('https://assets4.lottiefiles.com/packages/lf20_7fwvvesa.json',width:  MediaQuery.of(context).size.width*.1,fit: BoxFit.fitWidth),);
-                                              if(snapshot.connectionState==ConnectionState.waiting) {
-                                                return Center(child:  Lottie.network('https://assets4.lottiefiles.com/packages/lf20_7fwvvesa.json',width:  MediaQuery.of(context).size.width*.1,fit: BoxFit.fitWidth),);
-                                              }
-                                              var jsons = jsonDecode(snapshot.data!);
-                                              List<RecommendedTopic> recommendedTopics = [];
+                                      child: SelectableText("Recommended Topic",style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
+                                    ),
+                                    Padding(padding: EdgeInsets.all(10)),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                                      child: FutureBuilder<String?>(
+                                        future: DBController.get(command: "generate_topic", parameters: {"words":searchController.text+" "+catToString(" ")}),
+                                        builder: (BuildContext context, snapshot)
+                                        {
+                                            if(!snapshot.hasData)return Center(child:  Lottie.network('https://assets4.lottiefiles.com/packages/lf20_7fwvvesa.json',width:  MediaQuery.of(context).size.width*.1,fit: BoxFit.fitWidth),);
+                                            if(snapshot.connectionState==ConnectionState.waiting) {
+                                              return Center(child:  Lottie.network('https://assets4.lottiefiles.com/packages/lf20_7fwvvesa.json',width:  MediaQuery.of(context).size.width*.1,fit: BoxFit.fitWidth),);
+                                            }
+                                            var jsons = jsonDecode(snapshot.data!);
+                                            List<RecommendedTopic> recommendedTopics = [];
 
 
-                                              for(var json in jsons){
-                                                recommendedTopics.add(RecommendedTopic.toObject(json));
-                                              }
-                                              recommendedTopics.sort((a, b) {
-                                                return a.topic.toLowerCase().compareTo(b.topic.toLowerCase());
-                                              });
-                                              return SizedBox(
-                                                height: MediaQuery.of(context).size.height*.70,
-                                                child: ListView(
-                                                  children: recommendedTopics.map((topic) {
-                                                    return Container(
-                                                        margin: EdgeInsets.only(bottom: 5),
-                                                        width:double.infinity,
-                                                        decoration: BoxDecoration(
-                                                            color: MyColors.darkPrimary,
+                                            for(var json in jsons){
+                                              recommendedTopics.add(RecommendedTopic.toObject(json));
+                                            }
+                                            recommendedTopics.sort((a, b) {
+                                              return a.topic.toLowerCase().compareTo(b.topic.toLowerCase());
+                                            });
+                                            return SizedBox(
+                                              height: MediaQuery.of(context).size.height*.70,
+                                              child: ListView(
+                                                children: recommendedTopics.map((topic) {
+                                                  return Container(
+                                                      margin: EdgeInsets.only(bottom: 5),
+                                                      width:double.infinity,
+                                                      decoration: BoxDecoration(
+                                                          color: MyColors.darkPrimary,
 
-                                                            borderRadius: BorderRadius.all(Radius.circular(10))
-                                                        ),
-                                                        padding: EdgeInsets.all(10),
-                                                        child: Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          children: [
-                                                            SelectableText(topic.topic.toTitleCase(),style: TextStyle(color:Colors.white),),
-                                                            // SelectableText(re.AUTHOR.replaceAll("\n", ",")),
-                                                            // SelectableText(re.YEAR.replaceAll("\n", "")+" "+re.MONTH.replaceAll("\n", ""),style: TextStyle(fontWeight: FontWeight.w100,fontSize: 10),)
-                                                          ],
-                                                        )
-                                                    );
-                                                    // return Container(
-                                                    //   padding: EdgeInsets.all(10),
-                                                    //     decoration: BoxDecoration(
-                                                    //         color: MyColors.primary,
-                                                    //         // border: Border.all(
-                                                    //         //   width: 3,
-                                                    //         //   color: MyColors.secondary,
-                                                    //         // ),
-                                                    //         borderRadius: recommendedTopics.indexOf(topic)==0? BorderRadius.only(topLeft: Radius.circular(20),topRight:Radius.circular(20) ):recommendedTopics.indexOf(topic)==recommendedTopics.length-1?BorderRadius.only(bottomLeft: Radius.circular(20),bottomRight:Radius.circular(20) ):BorderRadius.zero
-                                                    //     ),
-                                                    //     child: InkWell(
-                                                    //         onTap: (){
-                                                    //           Clipboard.setData(ClipboardData(text: topic.topic))
-                                                    //               .then((value) { //only if ->
-                                                    //             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Copied to clipboard"))); // -> show a notification
-                                                    //           });
-                                                    //         },
-                                                    //         child: SelectableText(topic.topic.toTitleCase(),style: TextStyle(color: Colors.white),)
-                                                    //     )
-                                                    // );
-                                                  }).toList(),
-                                                ),
-                                              );
-                                          },
+                                                          borderRadius: BorderRadius.all(Radius.circular(10))
+                                                      ),
+                                                      padding: EdgeInsets.all(10),
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          SelectableText(topic.topic.toTitleCase(),style: TextStyle(color:Colors.white),),
+                                                          // SelectableText(re.AUTHOR.replaceAll("\n", ",")),
+                                                          // SelectableText(re.YEAR.replaceAll("\n", "")+" "+re.MONTH.replaceAll("\n", ""),style: TextStyle(fontWeight: FontWeight.w100,fontSize: 10),)
+                                                        ],
+                                                      )
+                                                  );
+                                                  // return Container(
+                                                  //   padding: EdgeInsets.all(10),
+                                                  //     decoration: BoxDecoration(
+                                                  //         color: MyColors.primary,
+                                                  //         // border: Border.all(
+                                                  //         //   width: 3,
+                                                  //         //   color: MyColors.secondary,
+                                                  //         // ),
+                                                  //         borderRadius: recommendedTopics.indexOf(topic)==0? BorderRadius.only(topLeft: Radius.circular(20),topRight:Radius.circular(20) ):recommendedTopics.indexOf(topic)==recommendedTopics.length-1?BorderRadius.only(bottomLeft: Radius.circular(20),bottomRight:Radius.circular(20) ):BorderRadius.zero
+                                                  //     ),
+                                                  //     child: InkWell(
+                                                  //         onTap: (){
+                                                  //           Clipboard.setData(ClipboardData(text: topic.topic))
+                                                  //               .then((value) { //only if ->
+                                                  //             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Copied to clipboard"))); // -> show a notification
+                                                  //           });
+                                                  //         },
+                                                  //         child: SelectableText(topic.topic.toTitleCase(),style: TextStyle(color: Colors.white),)
+                                                  //     )
+                                                  // );
+                                                }).toList(),
+                                              ),
+                                            );
+                                        },
 
-                                        )
                                       )
-                                    ],
-                                  ),
+                                    )
+                                  ],
                                 ),
                               ),
                               Expanded(
@@ -360,7 +358,6 @@ class _ResultState extends State<Result> {
                                       FutureBuilder<String?>(
                                           future: selectedCategories.isNotEmpty&&word.isEmpty?DBController.get(command: "get_all_thesis", parameters: {}):DBController.getSearch(words: word),
                                           builder:(context,snapshot){
-
                                             if(!snapshot.hasData)return Center(child:  Lottie.network('https://assets4.lottiefiles.com/packages/lf20_7fwvvesa.json',width:  MediaQuery.of(context).size.width*.1,fit: BoxFit.fitWidth),);
                                             if(snapshot.connectionState==ConnectionState.waiting) {
                                               return Center(child:  Lottie.network('https://assets4.lottiefiles.com/packages/lf20_7fwvvesa.json',width:  MediaQuery.of(context).size.width*.1,fit: BoxFit.fitWidth),);
@@ -371,6 +368,7 @@ class _ResultState extends State<Result> {
 
                                             for(var jsObject in jsonObject){
                                               SearchResult sResult = SearchResult.toObject(jsObject);
+
                                               if(rResults.where((element) => element.ID==sResult.ID).isNotEmpty)continue;
                                               if(selectedCategories.isNotEmpty){
                                                 for(String cat in selectedCategories){

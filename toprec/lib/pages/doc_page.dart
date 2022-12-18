@@ -46,7 +46,7 @@ class _DocumentPageSate extends State<DocumentPage>{
                     child: SelectableText("About",style: TextStyle(color: Colors.white),),
                   ),
                   Padding(padding: EdgeInsets.symmetric(horizontal: 20)),
-                  if(widget.user.type.toUpperCase().compareTo(UserType.FACULTY.toUpperCase())>=0)
+                  if(widget.user.type.toUpperCase() == UserType.FACULTY.toUpperCase())
                     TextButton(
                       onPressed: (){
                         Navigator.push(
@@ -57,7 +57,7 @@ class _DocumentPageSate extends State<DocumentPage>{
                       },
                       child: Text("Manage Theses",style: TextStyle(color: Colors.white),),
                     ),
-                  if(widget.user.type.toUpperCase().compareTo(UserType.FACULTY.toUpperCase())>=0)
+                  if(widget.user.type.toUpperCase() == UserType.FACULTY.toUpperCase())
                     Padding(padding: EdgeInsets.symmetric(horizontal: 20)),
                   if(true)//if login page
                     TextButton(
