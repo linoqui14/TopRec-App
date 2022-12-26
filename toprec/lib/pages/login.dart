@@ -9,6 +9,7 @@ import 'package:toprec/tools/variables.dart';
 
 import '../custom_widgets/custom_text_field.dart';
 import '../models/user.dart';
+import 'about.dart';
 import 'home.dart';
 class Login extends StatefulWidget {
   const Login({Key? key,}) : super(key: key);
@@ -76,19 +77,18 @@ class _LoginState extends State<Login> {
                padding: EdgeInsets.symmetric(horizontal: 50,vertical: 10),
                child: Row(
                  children: [
-                   TextButton(
-                     onPressed: (){
 
-                     },
-                     child: Text("Contact",style: TextStyle(color: Colors.white),),
-                   ),
                    Padding(padding: EdgeInsets.symmetric(horizontal: 20)),
-                   TextButton(
-                     onPressed: (){
-
-                     },
-                     child: Text("About",style: TextStyle(color: Colors.white),),
-                   ),
+                   // TextButton(
+                   //   onPressed: (){
+                   //     Navigator.pushAndRemoveUntil(
+                   //       context,
+                   //       MaterialPageRoute(builder: (context) => About(user:null)),
+                   //           (Route<dynamic> route) => true,
+                   //     );
+                   //   },
+                   //   child: Text("About",style: TextStyle(color: Colors.white),),
+                   // ),
                    Padding(padding: EdgeInsets.symmetric(horizontal: 20)),
                    if(false)//if login page
                      TextButton(
@@ -233,8 +233,9 @@ class _LoginState extends State<Login> {
                                                 if(password.text.isNotEmpty&&username.text.isNotEmpty){
 
                                                   DBController.getUser(username: username.text, password: password.text).then((value){
-
+                                                    print(value);
                                                     if(value!=null){
+
                                                       BoxCollection.open(
                                                         'db.db', // Name of your database
                                                         {'users',}, // Names of your boxes

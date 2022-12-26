@@ -22,7 +22,7 @@ class Constants{
   static String hostname = Platform.localHostname;
 }
 class DBController{
-  static String ip = "localhost";
+  static String ip = "127.0.0.1";
   static Future<bool> testConnection() async{
     String phpurl = "http://$ip:5000/is_connected";
     var res = await http.post(Uri.parse(phpurl), body: {

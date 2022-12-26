@@ -1,7 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:toprec/pages/about.dart';
 import 'package:toprec/pages/admin_page.dart';
+import 'package:toprec/pages/result.dart';
 
 import '../models/user.dart';
 import '../tools/variables.dart';
@@ -15,8 +17,26 @@ AppBar header(User user,BuildContext context,String page){
     elevation: 0,
     title:  Row(
       children: [
-        SelectableText("TOPREC   ",style: TextStyle(fontFamily: 'Tually',color: Colors.white,fontSize: MediaQuery.of(context).size.width*.02),),
-        SelectableText(user.type.toTitleCase())
+        InkWell(
+          // onHover: (isHover){
+          //   print("asdasd");
+          // },
+            onTap: (){
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => Result(user:user,word: "",listOfCat: [],)),
+                    (Route<dynamic> route) => false,
+              );
+            },
+            child: Text("TOPREC   ",style: TextStyle(fontFamily: 'Tually',color: Colors.white,fontSize: MediaQuery.of(context).size.width*.02),)
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SelectableText(user.type.toTitleCase()),
+            SelectableText(user.firstname.toTitleCase()+" "+user.lastname.toTitleCase(),style: TextStyle(color: Colors.white,fontSize: 12),),
+          ],
+        )
       ],
     ),
     actions: [
@@ -25,18 +45,22 @@ AppBar header(User user,BuildContext context,String page){
           padding: EdgeInsets.symmetric(horizontal: 50,vertical: 10),
           child: Row(
             children: [
+              // TextButton(
+              //   onPressed: (){
+              //
+              //   },
+              //   child: Text("Contact",style: TextStyle(color: Colors.white),),
+              // ),
+              // Padding(padding: EdgeInsets.symmetric(horizontal: 20)),
               TextButton(
                 onPressed: (){
-
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => About(user:user)),
+                        (Route<dynamic> route) => true,
+                  );
                 },
-                child: SelectableText("Contact",style: TextStyle(color: Colors.white),),
-              ),
-              Padding(padding: EdgeInsets.symmetric(horizontal: 20)),
-              TextButton(
-                onPressed: (){
-
-                },
-                child: SelectableText("About",style: TextStyle(color: Colors.white),),
+                child: Text("About",style: TextStyle(color: Colors.white),),
               ),
               Padding(padding: EdgeInsets.symmetric(horizontal: 20)),
 

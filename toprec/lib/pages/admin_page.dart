@@ -103,12 +103,12 @@ class _AdminPageSate extends State<AdminPage>{
 
                                       }
                                       // print(searchResults.first.DATEINPUTED);
-                                      searchResults.sort((a,b){
-
-                                        DateTime aTime = DateTime.parse(a.DATEINPUTED);
-                                        DateTime bTime = DateTime.parse(b.DATEINPUTED);
-                                        return  bTime.compareTo(aTime);
-                                      });
+                                      // searchResults.sort((a,b){
+                                      //
+                                      //   DateTime aTime = DateTime.parse(a.DATEINPUTED);
+                                      //   DateTime bTime = DateTime.parse(b.DATEINPUTED);
+                                      //   return  bTime.compareTo(aTime);
+                                      // });
                                       // print(searchResult[0].);
                                       return Column(
                                         children: [
@@ -150,6 +150,7 @@ class _AdminPageSate extends State<AdminPage>{
                                                   child: ListView(
                                                     children: searchResults.map((re) {
                                                       bool isHover = false;
+                                                      bool isDeleted = re.TITLE.contains("(221x)delete");
                                                       return StatefulBuilder(
                                                           builder: (context,stateTitle) {
                                                             return InkWell(
@@ -173,7 +174,7 @@ class _AdminPageSate extends State<AdminPage>{
                                                                       Container(
                                                                           width:double.infinity,
                                                                           decoration: BoxDecoration(
-                                                                              color: isHover?MyColors.secondary:MyColors.darkPrimary,
+                                                                              color: isDeleted?Colors.red:isHover?MyColors.secondary:MyColors.darkPrimary,
 
                                                                               borderRadius: BorderRadius.only(topLeft: Radius.circular(10),topRight: Radius.circular(10),bottomRight: Radius.circular(10))
                                                                           ),
@@ -184,14 +185,30 @@ class _AdminPageSate extends State<AdminPage>{
                                                                               Row(
                                                                                 children: [
                                                                                   Text("From : ",style: TextStyle(color:Colors.white,fontWeight: FontWeight.w100,fontFamily: "Uni Sans")),
-                                                                                  Text(re.FACULTY.toTitleCase(),style: TextStyle(color:Colors.white,fontWeight: FontWeight.bold,fontSize: 15,fontFamily: "Uni Sans")),
+                                                                                  FutureBuilder<String?>(
+                                                                                    future: DBController.get(command: "get_user_by_id", parameters: {"userID":re.FACULTY}),
+                                                                                    builder: (context, snapshot) {
+                                                                                      if(!snapshot.hasData)return Text(re.FACULTY.toTitleCase(),style: TextStyle(color:Colors.white,fontWeight: FontWeight.bold,fontSize: 15,fontFamily: "Uni Sans"));
+                                                                                      if(snapshot.connectionState==ConnectionState.waiting) {
+                                                                                        return Text(re.FACULTY.toTitleCase(),style: TextStyle(color:Colors.white,fontWeight: FontWeight.bold,fontSize: 15,fontFamily: "Uni Sans"));
+                                                                                      }
+                                                                                      late User user;
+                                                                                      try{
+                                                                                        user = User.toObject(jsonDecode(snapshot.data!));
+                                                                                      }catch(e){
+                                                                                        return Text(re.FACULTY.toTitleCase(),style: TextStyle(color:Colors.white,fontWeight: FontWeight.bold,fontSize: 15,fontFamily: "Uni Sans"));
+                                                                                      }
+
+                                                                                      return Text(user.firstname.toTitleCase()+" "+user.lastname.toTitleCase(),style: TextStyle(color:Colors.white,fontWeight: FontWeight.bold,fontSize: 15,fontFamily: "Uni Sans"));
+                                                                                    }
+                                                                                  ),
                                                                                   Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
-                                                                                  Text("At : ",style: TextStyle(color:Colors.white,fontWeight: FontWeight.w100,fontFamily: "Uni Sans")),
+                                                                                  Text((isDeleted?"Deleted ":"Inserted: ")+"At : ",style: TextStyle(color:Colors.white,fontWeight: FontWeight.w100,fontFamily: "Uni Sans")),
                                                                                   Text(DateFormat.yMMMd().add_jm().format(DateTime.parse(re.DATEINPUTED)) ,style: TextStyle(color:Colors.white,fontWeight: FontWeight.bold,fontSize: 15,fontFamily: "Uni Sans")),
                                                                                 ],
                                                                               ),
                                                                               Divider(color: MyColors.secondary,),
-                                                                              SelectableText(re.TITLE.replaceAll("\n", "").toTitleCase(),style: TextStyle(color:Colors.white),),
+                                                                              SelectableText(re.TITLE.replaceAll("\n", "").toTitleCase().replaceAll("(221X)Delete", ""),style: TextStyle(color:Colors.white),),
                                                                               // SelectableText(re.AUTHOR.replaceAll("\n", ",")),
                                                                               // SelectableText(re.YEAR.replaceAll("\n", "")+" "+re.MONTH.replaceAll("\n", ""),style: TextStyle(fontWeight: FontWeight.w100,fontSize: 10),)
                                                                             ],
@@ -409,10 +426,11 @@ class _AdminPageSate extends State<AdminPage>{
                                         if(user.type==UserType.ADMIN)continue;
                                         users.add(user);
                                       }
+
                                       return SizedBox(
                                         height: MediaQuery.of(context).size.width*.30,
                                         child: ListView(
-                                          children: users.map((user) {
+                                          children: users.reversed.map((user) {
                                             bool isEdit = false;
                                             return Container(
                                                 decoration: BoxDecoration(
@@ -496,7 +514,13 @@ class _AdminPageSate extends State<AdminPage>{
                                                                                           children: [
                                                                                             if(user.type!=UserType.ADMIN)
                                                                                               Text(user.type==UserType.FACULTY?"Faculty ID":"Student ID ",style: TextStyle(fontSize: 12,color: Colors.white,fontWeight: FontWeight.w100,fontFamily: "Uni Sans"),),
-                                                                                            Text(user.id,style: TextStyle(fontSize: 40,color: Colors.white,fontWeight: FontWeight.bold,fontFamily: "Uni Sans"),),
+                                                                                            Row(
+                                                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                              children: [
+                                                                                                Text(user.id,style: TextStyle(fontSize: 40,color: Colors.white,fontWeight: FontWeight.bold,fontFamily: "Uni Sans"),),
+
+                                                                                              ],
+                                                                                            ),
                                                                                           ],
                                                                                         ),
                                                                                         Column(
@@ -540,7 +564,19 @@ class _AdminPageSate extends State<AdminPage>{
                                                                                           Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                                                                                           CustomTextField(hint: "Firstname", controller: firstname,color:  !isEdit?Colors.white.withAlpha(150):Colors.white,padding: EdgeInsets.all(5),enable: false),
                                                                                           CustomTextField(hint: "Lastname", controller: lastname,color:  !isEdit?Colors.white.withAlpha(150):Colors.white,padding: EdgeInsets.all(5),enable: false),
+                                                                                          Divider(),
+                                                                                          CustomTextButton(
+                                                                                            text: "Remove",
+                                                                                            onPressed: (){
+                                                                                              DBController.get(command: "delete_user", parameters: {"userID":user.id.toString()}).then((value){
+                                                                                                setState((){
+                                                                                                  Navigator.of(context).pop();
+                                                                                                });
 
+                                                                                              });
+                                                                                            },
+                                                                                            color: Colors.red,
+                                                                                          )
                                                                                         ],
                                                                                       ),
                                                                                     ),

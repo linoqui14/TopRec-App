@@ -364,6 +364,7 @@ class FacultyHomeState extends State<FacultyHome>{
                           var jsonObjects = jsonDecode(snapshot.data!);
                           for(var json in jsonObjects){
                             SearchResult result = SearchResult.toObject(json);
+                            if(result.TITLE.contains("(221x)delete"))continue;
                             if(result.CATEGORY.replaceAll(" ", "") .isEmpty&&searchResults.where((element) => element.TITLE.toLowerCase() == result.TITLE.toLowerCase()).isEmpty){
                               searchResults.add(result);
                             }
@@ -449,7 +450,7 @@ class FacultyHomeState extends State<FacultyHome>{
                                                   child: Column(
                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: [
-                                                      SelectableText(re.TITLE.replaceAll("\n", "").toTitleCase(),style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color:Colors.white),),
+                                                      SelectableText(re.TITLE.replaceAll("\n", "").toTitleCase(),style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color:Colors.white),),
                                                       // SelectableText(re.AUTHOR.replaceAll("\n", ",")),
                                                       // SelectableText(re.YEAR.replaceAll("\n", "")+" "+re.MONTH.replaceAll("\n", ""),style: TextStyle(fontWeight: FontWeight.w100,fontSize: 10),)
                                                     ],
@@ -516,7 +517,27 @@ class FacultyHomeState extends State<FacultyHome>{
                                                                     child: Center(
                                                                         child: ListView(
                                                                           children: [
-                                                                            Text("Edit Thesis",style: TextStyle(fontSize: 50,fontWeight: FontWeight.bold,color:Colors.white,fontFamily: "Uni Sans")),
+                                                                            Row(
+                                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                              children: [
+                                                                                Text("Edit Thesis",style: TextStyle(fontSize: 50,fontWeight: FontWeight.bold,color:Colors.white,fontFamily: "Uni Sans")),
+                                                                                CustomTextButton(
+                                                                                  text: "Remove",
+                                                                                  color: Colors.red,
+                                                                                  onPressed: (){
+                                                                                    re.TITLE+="(221x)delete";
+                                                                                    re.DATEINPUTED = DateTime.now().toString();
+                                                                                    re.FACULTY = widget.user.id;
+                                                                                    DBController.get(command: "update_thesis", parameters: re.toMap(false)).then((value) {
+                                                                                      setState(() {
+                                                                                        searchResults.clear();
+                                                                                        Navigator.of(context).pop();
+                                                                                      });
+                                                                                    });
+                                                                                  },
+                                                                                )
+                                                                              ],
+                                                                            ),
                                                                             // CustomTextField(hint: "Title", controller: title,color: Colors.white,),
                                                                             Row(
                                                                               children: [
